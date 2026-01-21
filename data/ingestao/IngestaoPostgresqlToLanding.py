@@ -156,7 +156,7 @@ def move_existing_files_to_archive(table):
 
 def get_latest_watermark(table_name):
     query = f"""SELECT MAX(load_timestamp) as latest_timestamp
-    from `{BQ_AUDIT_TABLE}`==
+    from `{BQ_AUDIT_TABLE}`
     WHERE tablename = '{table_name}'
     """
     query_job = bq_client.query(query)
