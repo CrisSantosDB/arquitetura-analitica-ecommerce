@@ -13,8 +13,8 @@ spark = (SparkSession.builder
 
 # Variaveis do GCS
 GCS_BUCKET = "datalake-ecommerce-2026"
-LANDING_PATH = f"Landing/Ecommerce_DB/"
-ARCHIVE_PATH= "Landing/Archive/"
+LANDING_PATH = f"landing/ecommerce_db/"
+ARCHIVE_PATH= "landing/archive/"
 CONFIG_FILE_PATH =f"gs://{GCS_BUCKET}/configs/ecommerce_config.csv"
 
 # Configuração do BigQuery
@@ -231,8 +231,3 @@ for row in config_df.collect():  # ou config_df.toLocalIterator()
 save_logs_to_gcs()
 save_logs_to_bigquery()
 print("✅ Pipeline concluído com sucesso!")
-
-        
-
-
-
