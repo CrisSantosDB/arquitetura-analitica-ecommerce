@@ -1,10 +1,10 @@
 database,datasource,tablename,loadtype,watermark,is_active,targetpath
 ecommerce,DB_Prod_ecommerce,crm.cliente,Incremental,updated_at,1,landing/ecommerce/cliente
-ecommerce,DB_Prod_ecommerce,crm.vendedor,Full Load,,1,landing/ecommerce/vendedor
+ecommerce,DB_Prod_ecommerce,crm.vendedor,Incremental,updated_at,1,landing/ecommerce/vendedor
 ecommerce,DB_Prod_ecommerce,vendas.pedido,Incremental,updated_at,1,landing/ecommerce/pedido
 ecommerce,DB_Prod_ecommerce,logistica.geolocalizacao,Full Load,,1,landing/ecommerce/geolocalizacao
 ecommerce,DB_Prod_ecommerce,vendas.pagamento,Incremental,updated_at,1,landing/ecommerce/pagamento
 ecommerce,DB_Prod_ecommerce,analise.avaliacao,Incremental,updated_at,1,landing/ecommerce/avaliacao
 ecommerce,DB_Prod_ecommerce,catalogo.categoria,Full Load,,1,landing/ecommerce/categoria
-ecommerce,DB_Prod_ecommerce,catalogo.produto,Full Load,,1,landing/ecommerce/produto
+ecommerce,DB_Prod_ecommerce,catalogo.produto,Incremental,updated_at,1,landing/ecommerce/produto
 ecommerce,DB_Prod_ecommerce,vendas.itens_pedido,Incremental,updated_at,1,landing/ecommerce/itens_pedido
