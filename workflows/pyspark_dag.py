@@ -12,7 +12,7 @@ from airflow.providers.google.cloud.operators.dataproc import(
 PROJECT_ID = "projeto-e-commerce-484617"
 REGION = "us-central1"
 CLUSTER_NAME = "demo-cluster"
-COMPOSER_BUCKET = ""
+COMPOSER_BUCKET = "us-central1-ambiente-airflo-4e645d97-bucket"
 
 GCS_JOB_FILE = f"gs://{COMPOSER_BUCKET}data/ingestao/IngestaoPostgresqlToLanding.py"
 PYSPARK_JOB = {
