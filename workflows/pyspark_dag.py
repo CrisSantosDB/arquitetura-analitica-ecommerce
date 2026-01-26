@@ -14,7 +14,7 @@ REGION = "us-central1"
 CLUSTER_NAME = "demo-cluster"
 COMPOSER_BUCKET = "us-central1-ambiente-airflo-4e645d97-bucket"
 
-GCS_JOB_FILE = f"gs://{COMPOSER_BUCKET}data/ingestao/IngestaoPostgresqlToLanding.py"
+GCS_JOB_FILE = f"gs://{COMPOSER_BUCKET}/data/ingestao/IngestaoPostgresqlToLanding.py"
 PYSPARK_JOB = {
     "reference":{"project_id": PROJECT_ID},
     "placement": {"cluster_name": CLUSTER_NAME},
