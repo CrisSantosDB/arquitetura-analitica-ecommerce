@@ -1,6 +1,6 @@
 -- Entender como estão as vendas por categoria, produto e vendedor; 
 
-create table if not exists projeto-e-commerce-484617.gold.rank_categoria
+create or replace table  projeto-e-commerce-484617.gold.rank_categoria
 as (
 with venda_total as (
 select p.product_category_name as categoria
@@ -30,7 +30,7 @@ order by total_venda desc
 
 ------------------------------------------------------------------------------------------
 
-create table if not exists projeto-e-commerce-484617.gold.rank_vendedor
+create or replace table  projeto-e-commerce-484617.gold.rank_vendedor
 as (
 with Venda_Total as (
 select ip.seller_id as ID_Vendedor
@@ -61,7 +61,7 @@ from Venda_Total
 ------------------------------------------------------------------------------------------
 
 -- Acompanhar o faturamento, bem como os custos por pedido (frete,taxas, etc.); 
-create table if not exists projeto-e-commerce-484617.gold.faturamento
+create or replace table  projeto-e-commerce-484617.gold.faturamento
 as (
 select 
       ip.order_id as id_pedido 
@@ -82,7 +82,7 @@ order by valor_total_pedido desc
 
 --- Avaliar a satisfação dos clientes, como base em avaliações de notas
 
-create table if not exists projeto-e-commerce-484617.gold.avaliacao
+create or replace table  projeto-e-commerce-484617.gold.avaliacao
 as (
 select a.order_id 
       ,p.customer_id
@@ -106,7 +106,7 @@ and a.is_valid = true
 
 -- Identificar regiões com maior volume de vendas e maiores atrasos de entrega
 
-create table if not exists projeto-e-commerce-484617.gold.resumo_entrega_estado 
+create or replace table  projeto-e-commerce-484617.gold.resumo_entrega_estado 
 as (
 select 
        c.customer_state
@@ -140,7 +140,7 @@ group by  c.customer_state
 ;
 ------------------------------------------------------------------------------------
 -- Analisar as formas de pagamento mais utilizadas, além de  cancelamentos
-create table if not exists projeto-e-commerce-484617.gold.pagamento_cancelado
+create or replace table  projeto-e-commerce-484617.gold.pagamento_cancelado
 as (
 with total_pedido as (
 select payment_type
@@ -176,7 +176,7 @@ order by taxa_cancelamento desc
 --------------------------------------------------------------------------------------------
 -- Comparar o desempenho ao longo do tempo, realizando análises mês a mês e ano a ano.
 
-create table if not exists projeto-e-commerce-484617.gold.desempenho_ano_mes 
+create or replace table  projeto-e-commerce-484617.gold.desempenho_ano_mes 
 as (
 
 with valor_total as (
