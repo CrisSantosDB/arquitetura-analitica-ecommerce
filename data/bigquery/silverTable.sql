@@ -87,7 +87,7 @@ USING (
   
 --------------------------------------------------------------------------------------------------
 -- tabela vendedor  SCD2
-create table projeto-e-commerce-484617.silver.vendedor (
+create table if not exists projeto-e-commerce-484617.silver.vendedor (
   seller_id STRING
   ,seller_zip_code_prefix INT64
   ,seller_city STRING
@@ -169,7 +169,7 @@ VALUES (
 -- Tabela pedido SCD1
 
 
-create table projeto-e-commerce-484617.silver.pedido (
+create table if not exists projeto-e-commerce-484617.silver.pedido (
   order_id STRING
  ,customer_id STRING
  ,order_status STRING
