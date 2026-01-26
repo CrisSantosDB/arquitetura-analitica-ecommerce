@@ -222,7 +222,7 @@ def extract_and_save_to_landing(table,load_type,watermark_col):
     ###################################################################################################
 # Main 
 config_df = read_config_file()
-for row in config_df.collect():  # ou config_df.toLocalIterator()
+for row in config_df.toLocalIterator():
     if row["is_active"] == '1':
         database,datasource,tablename,loadtype,watermark,is_active,targetpath = row
         move_existing_files_to_archive(tablename)
