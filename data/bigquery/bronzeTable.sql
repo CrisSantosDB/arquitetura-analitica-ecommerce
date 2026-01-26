@@ -90,7 +90,7 @@ OPTIONS(
 );
 
 -- Tabela categoria 
-create external table projeto-e-commerce-484617.bronze.categoria (
+create external table if not exists projeto-e-commerce-484617.bronze.categoria (
  product_category_name STRING
  ,product_category_name_english STRING
  ,updated_at TIMESTAMP
