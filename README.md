@@ -53,14 +53,17 @@ Essas tabelas permitem que **analistas e áreas de negócio foquem em insights**
 
 ---
 ## 📁 Estrutura do Projeto
+
 A organização do repositório segue boas práticas de Engenharia de Dados, separando responsabilidades e facilitando manutenção, escalabilidade e colaboração:
 
-├── data/               # Arquivos de configuração, scripts de ingestão e definições das camadas no BigQuery (Bronze, Silver, Gold)
-├── utils/              # Utilitários e funções auxiliares reutilizáveis (ex: scripts de apoio ao deploy e automação no GCP)
+```text
+├── data/               # Arquivos de configuração, ingestão e camadas no BigQuery (Bronze, Silver, Gold)
+├── utils/              # Utilitários e funções auxiliares reutilizáveis
 ├── workflows/          # Orquestração dos pipelines (DAGs do Apache Airflow / Cloud Composer)
 ├── cloudbuild.yaml     # Configuração de CI/CD utilizando Google Cloud Build
 ├── pyproject.toml      # Gerenciamento de dependências e configurações do projeto Python
 └── README.md           # Documentação geral do projeto
+```
 
 ---
 ## 🛠️ Tecnologias Utilizadas
