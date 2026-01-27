@@ -84,9 +84,9 @@ order by valor_total_pedido desc
 
 create or replace table  projeto-e-commerce-484617.gold.avaliacao
 as (
-select a.order_id 
-      ,p.customer_id
-      ,a.review_score
+select a.order_id as id_pedido
+      ,p.customer_id as id_cliente
+      ,a.review_score as nota_avaliacao
       ,(CASE
        WHEN review_score = 1 THEN "horrivel"
        WHEN review_score = 2 THEN "ruim"
@@ -109,22 +109,22 @@ and a.is_valid = true
 create or replace table  projeto-e-commerce-484617.gold.resumo_entrega_estado 
 as (
 select 
-       c.customer_state
+       c.customer_state as estado_cliente
        ,count(*) qtd_vendas
 
       ,sum(
             case 
             when p.order_delivered_customer_date > p.order_estimated_delivery_date then 1
             else 0
-            end) as pedidos_atrasados
+            end) as qtd_pedidos_atrasados
       ,round
        (sum 
             (case 
             when p.order_delivered_customer_date > p.order_estimated_delivery_date then 1
             else 0
-            end) / count(*) * 100 ,2)as porcent_atraso
+            end) / count(*) * 100 ,2)as porcentual_atraso
 
-      ,sum(f.valor_total_pedido) as valor_total_pedido
+      ,sum(f.valor_total_pedido) as valor_total_vendas
 
 from projeto-e-commerce-484617.silver.pedido p
 inner join projeto-e-commerce-484617.silver.cliente c
@@ -142,18 +142,18 @@ group by  c.customer_state
 -- Analisar as formas de pagamento mais utilizadas, além de  cancelamentos
 create or replace table  projeto-e-commerce-484617.gold.pagamento_cancelado
 as (
-with total_pedido as (
-select payment_type
-      ,count(distinct order_id ) as total_pedido
+with total_pedidos as (
+select payment_type as tipo_pagamento
+      ,count(distinct order_id ) as total_pedidos
 from projeto-e-commerce-484617.silver.pagamento
 where is_valid = true 
 group by payment_type
 )
 
 ,
-total_pedido_cancelado as (
-select  pg.payment_type
-        ,count(distinct pg.order_id) as total_pedido_cancelado
+total_pedidos_cancelados as (
+select  pg.payment_type as tipo_pagamento
+        ,count(distinct pg.order_id) as total_pedidos_cancelados
 from projeto-e-commerce-484617.silver.pagamento pg
 inner join projeto-e-commerce-484617.silver.pedido p
 on pg.order_id = p.order_id
@@ -164,13 +164,13 @@ group by pg.payment_type
 )
 
 select 
-      t.payment_type
-      ,t.total_pedido
-      ,coalesce(c.total_pedido_cancelado,0) as total_pedido_cancelado
-      ,round(coalesce(c.total_pedido_cancelado,0) / total_pedido * 100,2) as taxa_cancelamento
-from total_pedido t
-left join total_pedido_cancelado c 
-on t.payment_type = c.payment_type
+      t.tipo_pagamento
+      ,t.total_pedidos
+      ,coalesce(c.total_pedidos_cancelados,0) as total_pedidos_cancelados
+      ,round(coalesce(c.total_pedidos_cancelados,0) / total_pedidos * 100,2) as taxa_cancelamento
+from total_pedidos t
+left join total_pedidos_cancelados c 
+on t.tipo_pagamento = c.tipo_pagamento
 order by taxa_cancelamento desc
 );
 --------------------------------------------------------------------------------------------
