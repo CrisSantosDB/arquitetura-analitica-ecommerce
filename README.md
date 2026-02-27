@@ -1,4 +1,6 @@
 # 🚀 Projeto de Engenharia de Dados para E-commerce  
+![Arquitetura Analítica do E-commerce](https://github.com/CrisSantosDB/arquitetura-analitica-ecommerce/blob/main/arquitetura_ecommerce.png)
+
 ### Transformando dados brutos em decisões de negócio
 
 E-commerces operam em um ambiente altamente competitivo, onde **atrasos logísticos, cancelamentos, baixa conversão, dependência de poucos vendedores** e decisões baseadas em dados inconsistentes podem impactar diretamente o faturamento e a experiência do cliente.
