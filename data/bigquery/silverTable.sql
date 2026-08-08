@@ -16,14 +16,18 @@ create table if not exists projeto-e-commerce-484617.silver.cliente (
  -- 2° Atualizar registros ativos existentes, caso haja alterações
 MERGE INTO projeto-e-commerce-484617.silver.cliente as destino
 USING (
-  SELECT DISTINCT 
+  SELECT 
   customer_id 
   ,customer_unique_id 
   ,customer_zip_code_prefix 
   ,customer_city 
   ,customer_state 
   ,updated_at 
-FROM projeto-e-commerce-484617.bronze.cliente) as origem 
+FROM projeto-e-commerce-484617.bronze.cliente
+  QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY customer_id
+    ORDER BY updated_at DESC
+  ) = 1) as origem 
 ON destino.customer_id = origem.customer_id AND destino.is_active = true 
 
 WHEN MATCHED AND 
@@ -31,8 +35,8 @@ WHEN MATCHED AND
             destino.customer_unique_id IS DISTINCT FROM  origem.customer_unique_id OR  
             destino.customer_zip_code_prefix IS DISTINCT FROM  origem.customer_zip_code_prefix OR 
             destino.customer_city IS DISTINCT FROM  origem.customer_city OR 
-            destino.customer_state IS DISTINCT FROM  origem.customer_state OR 
-            destino.updated_at IS DISTINCT FROM  origem.updated_at
+            destino.customer_state IS DISTINCT FROM  origem.customer_state 
+           
 )
 THEN UPDATE SET 
             destino.is_active = false,
@@ -41,7 +45,7 @@ THEN UPDATE SET
 --  3° Inserir registros novos ou atualizados
 MERGE INTO projeto-e-commerce-484617.silver.cliente as destino 
 USING (
-  SELECT DISTINCT 
+  SELECT 
   customer_id 
   ,customer_unique_id 
   ,customer_zip_code_prefix 
@@ -56,7 +60,11 @@ USING (
         customer_state IS NULL THEN FALSE
         ELSE TRUE
       END) AS is_valid
-  FROM projeto-e-commerce-484617.bronze.cliente) as origem 
+  FROM projeto-e-commerce-484617.bronze.cliente
+  QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY customer_id
+    ORDER BY updated_at DESC
+  ) = 1) as origem 
   ON destino.customer_id = origem.customer_id AND destino.is_active = true 
   
   WHEN NOT MATCHED THEN 
@@ -101,14 +109,18 @@ create table if not exists projeto-e-commerce-484617.silver.vendedor (
 
 MERGE INTO projeto-e-commerce-484617.silver.vendedor AS destino
 USING(
-  select distinct 
+  select 
    seller_id 
   ,seller_zip_code_prefix 
   ,seller_city
   ,seller_state 
   ,updated_at 
 
-FROM projeto-e-commerce-484617.bronze.vendedor) as origem
+FROM projeto-e-commerce-484617.bronze.vendedor
+   QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY seller_id
+    ORDER BY updated_at DESC
+  ) = 1) as origem
 ON destino.seller_id = origem.seller_id  and destino.is_active = true 
 
 WHEN MATCHED AND (
@@ -125,7 +137,7 @@ THEN UPDATE SET
 
 MERGE INTO projeto-e-commerce-484617.silver.vendedor AS destino
 USING (
-  select distinct 
+  select 
    seller_id 
   ,seller_zip_code_prefix 
   ,seller_city
@@ -138,7 +150,11 @@ USING (
   seller_state IS NULL THEN FALSE
   ELSE TRUE 
   END) AS is_valid
-  FROM projeto-e-commerce-484617.bronze.vendedor) AS origem
+  FROM projeto-e-commerce-484617.bronze.vendedor
+  QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY seller_id
+    ORDER BY updated_at DESC
+  ) = 1) AS origem
   ON destino.seller_id = origem.seller_id  and destino.is_active = true 
 
 WHEN NOT MATCHED THEN 
@@ -205,7 +221,11 @@ USING(
   END
   
   ) AS is_valid
-  FROM projeto-e-commerce-484617.bronze.pedido) as origem
+  FROM projeto-e-commerce-484617.bronze.pedido
+   QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY order_id
+    ORDER BY updated_at DESC
+  ) = 1) as origem
  ON destino.order_id = origem.order_id 
 WHEN  MATCHED AND (
   destino.customer_id IS DISTINCT FROM  origem.customer_id OR
@@ -321,7 +341,11 @@ USING (
   THEN FALSE
   ELSE TRUE
   END) as is_valid
-FROM projeto-e-commerce-484617.bronze.pagamento) AS origem
+FROM projeto-e-commerce-484617.bronze.pagamento
+  QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY order_id, payment_sequential
+    ORDER BY updated_at DESC
+  ) = 1) AS origem
 ON destino.order_id = origem.order_id
 AND destino.payment_sequential = origem.payment_sequential
 
@@ -394,7 +418,11 @@ review_id
   ELSE TRUE
   END
 ) AS is_valid
-FROM projeto-e-commerce-484617.bronze.avaliacao) AS origem
+FROM projeto-e-commerce-484617.bronze.avaliacao
+  QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY review_id, order_id
+    ORDER BY updated_at DESC
+  ) = 1) AS origem
 ON  destino.review_id = origem.review_id
 AND destino.order_id = origem.order_id
 
@@ -488,8 +516,22 @@ create table if not exists projeto-e-commerce-484617.silver.produto (
 );
 
 MERGE INTO projeto-e-commerce-484617.silver.produto AS destino
-USING (SELECT * 
-FROM projeto-e-commerce-484617.bronze.produto) AS origem 
+USING (SELECT 
+   product_id,
+  product_category_name,
+  product_name_lenght,
+  product_description_lenght,
+  product_photos_qty,
+  product_weight_g,
+  product_length_cm,
+  product_height_cm,
+  product_width_cm,
+  updated_at
+FROM projeto-e-commerce-484617.bronze.produto
+  QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY product_id
+    ORDER BY updated_at DESC
+  ) = 1) AS origem 
 ON destino.product_id = origem.product_id
 AND destino.is_active= true
 
@@ -509,7 +551,17 @@ destino.end_date = current_timestamp();
 
 MERGE INTO projeto-e-commerce-484617.silver.produto AS destino
 USING (
-  SELECT *,
+  SELECT 
+    product_id,
+    product_category_name,
+    product_name_lenght,
+    product_description_lenght,
+    product_photos_qty,
+    product_weight_g,
+    product_length_cm,
+    product_height_cm,
+    product_width_cm,
+    updated_at,
   (CASE 
   WHEN 
     product_id IS NULL OR
@@ -517,7 +569,11 @@ USING (
     THEN FALSE 
     ELSE TRUE
     END) AS is_valid
-FROM projeto-e-commerce-484617.bronze.produto) AS origem 
+FROM projeto-e-commerce-484617.bronze.produto
+  QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY product_id
+    ORDER BY updated_at DESC
+  ) = 1) AS origem 
 ON destino.product_id = origem.product_id
 AND destino.is_active= true
 
@@ -593,7 +649,11 @@ USING (
   THEN FALSE
   ELSE TRUE
   END ) AS is_valid
-FROM projeto-e-commerce-484617.bronze.itens_pedido ) AS origem
+FROM projeto-e-commerce-484617.bronze.itens_pedido 
+  QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY order_id, order_item_id
+    ORDER BY updated_at DESC
+) = 1) AS origem
 ON  destino.order_id = origem.order_id 
 AND destino.order_item_id = origem.order_item_id
 
